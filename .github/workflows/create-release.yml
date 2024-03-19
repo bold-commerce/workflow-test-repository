@@ -66,19 +66,23 @@ jobs:
                 branch_exists=`git ls-remote --heads origin refs/heads/release-$new_version | wc -l`
                 if [[ $branch_exist -eq 0 ]];
                 then
+                  echo "Branch does not exist, pushing new release branch"
                   git checkout -b release-$new_version
                   git add composer.json
                   git commit -m 'Bump version number for release'
                   git push --set-upstream origin release-$new_version
                 else
+                  echo "Branch exists, using existing branch"
                   git fetch origin
                   git checkout release-$new_version
                 fi
                 pr_exists=`gh pr list -H release-$new_version | wc -l`
                 if [[ $pr_exists -eq 0 ]];
                 then
+                  echo "Creating new Pull request for release"
                   gh pr create --title "Create release $new_version" --body "Create new release from workflow"
                 fi
+                echo "Meging release pull request"
                 gh pr merge --admin --squash
 
             - name: Create github release
