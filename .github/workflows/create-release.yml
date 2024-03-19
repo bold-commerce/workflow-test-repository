@@ -67,14 +67,13 @@ jobs:
                 if [[ $branch_exist -eq 0 ]];
                 then
                   git checkout -b release-$new_version
+                  git add composer.json
+                  git commit -m 'Bump version number for release'
+                  git push --set-upstream origin release-$new_version
                 else
                   git fetch origin
                   git checkout release-$new_version
-                  git pull --rebase
                 fi
-                git add composer.json
-                git commit -m 'Bump version number for release'
-                git push --set-upstream origin release-$new_version
                 pr_exists=`gh pr list -H release-$new_version | wc -l`
                 if [[ $pr_exists -eq 0 ]];
                 then
